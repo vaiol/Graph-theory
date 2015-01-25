@@ -5,5 +5,5 @@ class NonOrientedGraph : public Graph
 public:
 	NonOrientedGraph();
 	~NonOrientedGraph();
-	void removeThisMethodInTheFuture() const;
+	Matrix incedenceMatrix();
 };

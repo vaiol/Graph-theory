@@ -6,5 +6,5 @@ class OrientedGraph : public Graph
 public:
 	OrientedGraph();
 	~OrientedGraph();
-	void removeThisMethodInTheFuture() const;
+	Matrix incedenceMatrix();
 };

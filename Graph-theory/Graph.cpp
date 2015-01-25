@@ -57,9 +57,10 @@ Vertex * Graph::getVertex(int id)
 
 void Graph::addEdge(Edge * edge)
 {
+	Edge e(edge->getVertex1(), edge->getVertex2(), edge->getWeight());
 	if (hasVertex(edge->getVertex1()->getId()) && hasVertex(edge->getVertex2()->getId()))
 	{
-		edges.push_back(*edge);
+		edges.push_back(e);
 	}
 }
 
@@ -67,9 +68,9 @@ void Graph::addEdge(int vertex1, int vertex2, int weight)
 {
 	if (hasVertex(vertex1) && hasVertex(vertex2))
 	{
-		Vertex v1 = *(getVertex(vertex1));
-		Vertex v2 = *(getVertex(vertex2));
-		edges.push_back(Edge(&v1, &v2, weight));
+		Vertex * v1 = getVertex(vertex1);
+		Vertex * v2 = getVertex(vertex2);
+		edges.push_back(Edge(v1, v2, weight));
 	}
 }
 
@@ -77,9 +78,9 @@ void Graph::addEdge(int vertex1, int vertex2)
 {
 	if (hasVertex(vertex1) && hasVertex(vertex2))
 	{
-		Vertex v1 = *(getVertex(vertex1));
-		Vertex v2 = *(getVertex(vertex2));
-		edges.push_back((Edge(&v1, &v2)));
+		Vertex * v1 = getVertex(vertex1);
+		Vertex * v2 = getVertex(vertex2);
+		edges.push_back((Edge(v1, v2)));
 	}
 }
 
@@ -142,6 +143,7 @@ std::ostream& operator<<(std::ostream &strm, const Graph & ag)
 //=======  END  ====================== common method =================================
 
 //====== BEGIN ===================== incedence matrix ================================
+
 
 
 //======  END  ===================== incedence matrix ================================

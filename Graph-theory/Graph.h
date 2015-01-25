@@ -1,14 +1,16 @@
 #pragma once 
 #include "Edge.h"
+#include "Matrix.h"
 #include <vector>
 
 class Graph 
 {
 private:
-	std::vector<Edge> edges;
-	std::vector<Vertex> vertex;
 	bool hasVertex(int id);
 	int firstVertex();
+protected:
+	std::vector<Edge> edges;
+	std::vector<Vertex> vertex;
 public:
 	Graph();
 	~Graph();
@@ -26,5 +28,5 @@ public:
 
 	friend std::ostream& operator<<(std::ostream&, const Graph&);
 
-	virtual void removeThisMethodInTheFuture() const = 0;
+	virtual Matrix incedenceMatrix() = 0;
 };

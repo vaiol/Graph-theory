@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Edge.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="NonOrientedGraph.h" />
     <ClInclude Include="OrientedGraph.h" />
     <ClInclude Include="Vertex.h" />
