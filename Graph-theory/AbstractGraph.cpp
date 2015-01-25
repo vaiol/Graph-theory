@@ -31,8 +31,7 @@ void AbstractGraph::removeVertex(int id)
 	for (int i = 0; i < edges.size(); i++) 
 	{
 		if ((edges[i].getVertex1()->getId()) == id || (edges[i].getVertex2()->getId()) == id) 
-		{
-			std::cout << edges[i].getVertex1()->getId() << " " << edges[i].getVertex2()->getId() << std::endl;
+		{			
 			removeEdge(i);
 			i--;
 		}
@@ -50,10 +49,10 @@ void AbstractGraph::addEdge(Edge * edge)
 }
 
 std::ostream& operator<<(std::ostream &strm, const AbstractGraph & ag) {
-	strm << "Graph {" << std::endl;
+	/*strm << "Graph {" << std::endl;
 	for (int i = 0; i < ag.edges.size(); i++) {
 		strm << "   " << ag.edges[i] << std::endl;
 	}
-	strm << "}";
+	strm << "}";*/
 	return strm;
 }
