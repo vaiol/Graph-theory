@@ -1,33 +1,31 @@
 #include <iostream>
-#include "AbstractGraph.h"
+#include "OrientedGraph.h"
+#include "NonOrientedGraph.h"
 #include "Edge.h"
 #include "Vertex.h"
 
 using namespace std;
 
 int main() {
-	Vertex v(10);
-	Vertex v1(8);
-	Vertex v2(7);
-	Edge e(&v);
-	Edge e1(&v1);
-	Edge e2(&v2);
-	
 
-	AbstractGraph a(&e);
-	a.addEdge(&e);
-	a.addEdge(&e);
-	a.addEdge(&e);
-	a.addEdge(&e1);
-	a.addEdge(&e2);
+	Graph * graph = new OrientedGraph();
+	{
+		Vertex v1(1);
+		Vertex v2(2);
+		graph->addVertex(6);
+		graph->addEdge(&(Edge(&v1, &v2)));
+		graph->addEdge(2, 3, 2);
+		graph->addEdge(2, 4, 2);
+		graph->addEdge(3, 4, 2);
+		graph->addEdge(3, 6, 2);
+		graph->addEdge(4, 5, 2);
+		graph->addEdge(5, 3, 2);
+		graph->addEdge(5, 6, 2);
+	}
+	cout << *graph << endl;
 
-	cout << a;
 
-	cout << endl << endl;
 
-	a.removeVertex(&v);
-
-	cout << a;
 
 	cin.get();
 	return 0;

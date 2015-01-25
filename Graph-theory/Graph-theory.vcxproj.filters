@@ -30,7 +30,7 @@
     <ClCompile Include="NonOrientedGraph.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="AbstractGraph.cpp">
+    <ClCompile Include="Graph.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,13 +41,13 @@
     <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AbstractGraph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="OrientedGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NonOrientedGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
