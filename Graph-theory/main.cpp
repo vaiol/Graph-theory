@@ -1,38 +1,37 @@
 #include <iostream>
 #include "OrientedGraph.h"
 #include "NonOrientedGraph.h"
-#include "Edge.h"
-#include "Vertex.h"
 
 using namespace std;
 
+
+
+
 int main() {
-	Vertex v(10);
-	Vertex v1(8);
-	Vertex v2(7);
-	Edge e(&v);
-	Edge e1(&v1);
-	Edge e2(&v2);
-	
 
-	Graph * a = new OrientedGraph(&e);
-	Graph * b = new NonOrientedGraph(&e);
-	a->addEdge(&e);
-	a->addEdge(&e);
-	a->addEdge(&e);
-	a->addEdge(&e1);
-	a->addEdge(&e2);
+	Graph * graph = new OrientedGraph();
+	{
+		Vertex v1(1);
+		Vertex v2(2);
+		graph->addVertex(6);
+		graph->addEdge(&(Edge(&v1, &v2)));
+		graph->addEdge(2, 3);
+		graph->addEdge(2, 4);
+		graph->addEdge(3, 4);
+		graph->addEdge(3, 6);
+		graph->addEdge(4, 5);
+		graph->addEdge(5, 3);
+		graph->addEdge(5, 6);
+		graph->addEdge(6, 6);
+	}
+	cout << *graph << endl;
 
-	cout << *a;
+	Matrix matrix = graph->incedenceMatrix();
+	matrix.outputMatrix();
 
-	cout << endl << endl;
 
-	a->removeVertex(&v);
 
-	cout << *a << endl;
-	cout << *b;
-	a->removeThisMethodInTheFuture();
-	b->removeThisMethodInTheFuture();
+
 
 	cin.get();
 	return 0;

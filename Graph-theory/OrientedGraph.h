@@ -4,7 +4,7 @@
 class OrientedGraph : public Graph
 {
 public:
-	OrientedGraph(Edge * edge);
+	OrientedGraph();
 	~OrientedGraph();
-	void removeThisMethodInTheFuture() const;
+	Matrix incedenceMatrix();
 };

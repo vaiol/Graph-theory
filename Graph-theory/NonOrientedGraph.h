@@ -3,7 +3,7 @@
 class NonOrientedGraph : public Graph
 {
 public:
-	NonOrientedGraph(Edge * edge);
+	NonOrientedGraph();
 	~NonOrientedGraph();
-	void removeThisMethodInTheFuture() const;
+	Matrix incedenceMatrix();
 };

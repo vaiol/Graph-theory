@@ -1,27 +1,107 @@
 #include "Graph.h"
 
-Graph::Graph(Edge * edge)
+//======= BEGIN ====================== private method ================================
+
+bool Graph::hasVertex(int id)
 {
-	addEdge(edge);
+	for (int i = 0; i < vertex.size(); i++)
+	{
+		if (vertex[i].getId() == id)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
+int Graph::firstVertex()
+{
+	for (int i = 0; i < vertex.size(); i++)
+	{
+		if (vertex[i].getId() != i+1)
+		{
+			return i+1;
+		}
+	}
+	return vertex.size()+1;
+}
 
+//======== END ======================= private method ================================
+
+//======= BEGIN ====================== common method =================================
+
+Graph::Graph()
+{
+}
+
+Graph::~Graph()
+{
+}
 
 Edge * Graph::getEdge(int id)
 {
 	return &edges.at(id);
 }
 
-void Graph::removeEdge(int id)
+Vertex * Graph::getVertex(int id)
 {
-	edges.erase(edges.begin()+id);
+	for (int i = 0; i < vertex.size(); i++)
+	{
+		if (vertex[i].getId() == id)
+		{
+			return &vertex[i];
+		}
+	}
+	return NULL;
+}
+
+void Graph::addEdge(Edge * edge)
+{
+	Edge e(edge->getVertex1(), edge->getVertex2(), edge->getWeight());
+	if (hasVertex(edge->getVertex1()->getId()) && hasVertex(edge->getVertex2()->getId()))
+	{
+		edges.push_back(e);
+	}
+}
+
+void Graph::addEdge(int vertex1, int vertex2, int weight)
+{
+	if (hasVertex(vertex1) && hasVertex(vertex2))
+	{
+		Vertex * v1 = getVertex(vertex1);
+		Vertex * v2 = getVertex(vertex2);
+		edges.push_back(Edge(v1, v2, weight));
+	}
+}
+
+void Graph::addEdge(int vertex1, int vertex2)
+{
+	if (hasVertex(vertex1) && hasVertex(vertex2))
+	{
+		Vertex * v1 = getVertex(vertex1);
+		Vertex * v2 = getVertex(vertex2);
+		edges.push_back((Edge(v1, v2)));
+	}
+}
+
+void Graph::addVertex()
+{
+	vertex.push_back(Vertex(firstVertex()));
+}
+
+void Graph::addVertex(int count)
+{
+	for (int i = 0; i < count; i++)
+	{
+		addVertex();
+	}
 }
 
 void Graph::removeEdge(Edge * edge) 
 {
 	for (int i = 0; i < edges.size(); i++) {
 		if (edges[i] == *edge) {
-			removeEdge(i);
+			edges.erase(edges.begin() + i);
 			i--;
 		}
 	}
@@ -33,10 +113,11 @@ void Graph::removeVertex(int id)
 	{
 		if ((edges[i].getVertex1()->getId()) == id || (edges[i].getVertex2()->getId()) == id) 
 		{
-			removeEdge(i);
+			edges.erase(edges.begin() + i);
 			i--;
 		}
 	}
+	vertex.erase(vertex.begin() + id);
 }
 
 void Graph::removeVertex(Vertex * vertex) 
@@ -44,18 +125,24 @@ void Graph::removeVertex(Vertex * vertex)
 	removeVertex(vertex->getId());
 }
 
-void Graph::addEdge(Edge * edge) 
-{
-	edges.push_back(*edge);
-}
-
 std::ostream& operator<<(std::ostream &strm, const Graph & ag) 
 {
-	strm << "Graph {" << std::endl;
-	for (int i = 0; i < ag.edges.size(); i++) {
-		strm << "   " << ag.edges[i] << std::endl;
+	strm << "------- Graph ------" << std::endl;
+	strm << "   EDGE    | VERTEX " << std::endl;
+	strm << "--------------------" << std::endl;
+	
+	for (int i = 0; i < ag.edges.size(); i++) 
+	{
+		strm << ag.edges[i] << " | ";
+		if (i < ag.vertex.size()) 
+		{
+			strm << " " << ag.vertex[i];
+		}
+		strm << std::endl;
 	}
-	strm << "}";
 	return strm;
 }
+
+//=======  END  ====================== common method =================================
+
 
