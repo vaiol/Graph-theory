@@ -16,9 +16,20 @@ Matrix NonOrientedGraph::incedenceMatrix()
 	{
 		for (int j = 0; j < column; j++)
 		{
-			if (edges[j].getVertex1()->getId() == i + 1 || edges[j].getVertex2()->getId() == i + 1)
+			if (edges[j].getVertex1()->getId() == edges[j].getVertex2()->getId())
 			{
-				matrix[i][j] = -1;
+				if ((edges[j].getVertex1()->getId()-1) == i)
+				{
+					matrix[i][j] = 2;
+				}
+				else 
+				{
+					matrix[i][j] = 0;
+				}
+			}
+			else if (edges[j].getVertex1()->getId() == i + 1 || edges[j].getVertex2()->getId() == i + 1)
+			{
+				matrix[i][j] = 1;
 			}
 			else {
 				matrix[i][j] = 0;

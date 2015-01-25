@@ -81,5 +81,5 @@ bool operator==(const Edge& left, const Edge& right) {
 }
 
 std::ostream& operator<<(std::ostream &strm, const Edge & edge) {
-	return strm << "Edge(v1=" << *edge.vertex1 << ", v2=" << *edge.vertex2 << ", weight=" << edge.weight << ")";
+	return strm << std::setw(2) << *edge.vertex1 << " -" << std::setw(2) << *edge.vertex2 << " |" << std::setw(2) << edge.weight;
 }

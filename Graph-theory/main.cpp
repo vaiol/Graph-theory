@@ -5,23 +5,7 @@
 using namespace std;
 
 
-void outputMatrix(Matrix matrix) 
-{
-	int line = matrix.line;
-	int column = matrix.column;
-	int ** m = matrix.matrix;
 
-	cout << endl;
-	for (int i = 0; i < line; i++)
-	{
-		for (int j = 0; j < column; j++)
-		{
-			cout << m[i][j] << " ";
-		}
-		cout << endl;
-	}
-	cout << endl;
-}
 
 int main() {
 
@@ -38,11 +22,12 @@ int main() {
 		graph->addEdge(4, 5);
 		graph->addEdge(5, 3);
 		graph->addEdge(5, 6);
+		graph->addEdge(6, 6);
 	}
 	cout << *graph << endl;
 
 	Matrix matrix = graph->incedenceMatrix();
-	outputMatrix(matrix);
+	matrix.outputMatrix();
 
 
 

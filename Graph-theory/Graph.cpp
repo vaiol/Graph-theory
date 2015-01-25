@@ -127,24 +127,22 @@ void Graph::removeVertex(Vertex * vertex)
 
 std::ostream& operator<<(std::ostream &strm, const Graph & ag) 
 {
-	strm << "Graph {" << std::endl;
+	strm << "------- Graph ------" << std::endl;
+	strm << "   EDGE    | VERTEX " << std::endl;
+	strm << "--------------------" << std::endl;
+	
 	for (int i = 0; i < ag.edges.size(); i++) 
 	{
-		strm << "   " << ag.edges[i] << std::endl;
+		strm << ag.edges[i] << " | ";
+		if (i < ag.vertex.size()) 
+		{
+			strm << " " << ag.vertex[i];
+		}
+		strm << std::endl;
 	}
-	for (int i = 0; i < ag.vertex.size(); i++)
-	{
-		strm << "Vertex" << ag.vertex[i] << std::endl;
-	}
-	strm << "}";
 	return strm;
 }
 
 //=======  END  ====================== common method =================================
 
-//====== BEGIN ===================== incedence matrix ================================
-
-
-
-//======  END  ===================== incedence matrix ================================
 

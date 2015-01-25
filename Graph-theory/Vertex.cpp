@@ -25,5 +25,5 @@ bool operator==(const Vertex& left, const Vertex& right) {
 }
 
 std::ostream& operator<<(std::ostream &strm, const Vertex& vertex) {
-	return strm  << "(" << vertex.id << ")";
+	return strm  << std::setw(2) << vertex.id;
 }
