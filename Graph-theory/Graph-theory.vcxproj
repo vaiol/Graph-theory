@@ -78,7 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AbstractGraph.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NonOrientedGraph.cpp" />
@@ -86,7 +86,7 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AbstractGraph.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="Edge.h" />
     <ClInclude Include="NonOrientedGraph.h" />
     <ClInclude Include="OrientedGraph.h" />

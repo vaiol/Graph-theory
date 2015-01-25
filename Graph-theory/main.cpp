@@ -1,5 +1,6 @@
 #include <iostream>
-#include "AbstractGraph.h"
+#include "OrientedGraph.h"
+#include "NonOrientedGraph.h"
 #include "Edge.h"
 #include "Vertex.h"
 
@@ -14,20 +15,24 @@ int main() {
 	Edge e2(&v2);
 	
 
-	AbstractGraph a(&e);
-	a.addEdge(&e);
-	a.addEdge(&e);
-	a.addEdge(&e);
-	a.addEdge(&e1);
-	a.addEdge(&e2);
+	Graph * a = new OrientedGraph(&e);
+	Graph * b = new NonOrientedGraph(&e);
+	a->addEdge(&e);
+	a->addEdge(&e);
+	a->addEdge(&e);
+	a->addEdge(&e1);
+	a->addEdge(&e2);
 
-	cout << a;
+	cout << *a;
 
 	cout << endl << endl;
 
-	a.removeVertex(&v);
+	a->removeVertex(&v);
 
-	cout << a;
+	cout << *a << endl;
+	cout << *b;
+	a->removeThisMethodInTheFuture();
+	b->removeThisMethodInTheFuture();
 
 	cin.get();
 	return 0;
