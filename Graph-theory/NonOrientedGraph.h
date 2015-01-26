@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Graph.h"
 
 class NonOrientedGraph : public Graph
@@ -5,5 +7,7 @@ class NonOrientedGraph : public Graph
 public:
 	NonOrientedGraph();
 	~NonOrientedGraph();
-	Matrix incedenceMatrix();
+	int ** createIncedenceMatrix();
+	int ** createAdjacencyMatrix();
+	bool hasEdge(Edge * edge);
 };

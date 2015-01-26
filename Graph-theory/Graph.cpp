@@ -1,12 +1,13 @@
+#pragma once
 #include "Graph.h"
 
 //======= BEGIN ====================== private method ================================
 
 bool Graph::hasVertex(int id)
 {
-	for (int i = 0; i < vertex.size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
-		if (vertex[i].getId() == id)
+		if (vertices[i].getId() == id)
 		{
 			return true;
 		}
@@ -16,15 +17,16 @@ bool Graph::hasVertex(int id)
 
 int Graph::firstVertex()
 {
-	for (int i = 0; i < vertex.size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
-		if (vertex[i].getId() != i+1)
+		if (vertices[i].getId() != i+1)
 		{
 			return i+1;
 		}
 	}
-	return vertex.size()+1;
+	return vertices.size() + 1;
 }
+
 
 //======== END ======================= private method ================================
 
@@ -45,48 +47,56 @@ Edge * Graph::getEdge(int id)
 
 Vertex * Graph::getVertex(int id)
 {
-	for (int i = 0; i < vertex.size(); i++)
+	for (int i = 0; i < vertices.size(); i++)
 	{
-		if (vertex[i].getId() == id)
+		if (vertices[i].getId() == id)
 		{
-			return &vertex[i];
+			return &vertices[i];
 		}
 	}
 	return NULL;
 }
 
-void Graph::addEdge(Edge * edge)
+bool Graph::addEdge(Edge * edge)
 {
-	Edge e(edge->getVertex1(), edge->getVertex2(), edge->getWeight());
-	if (hasVertex(edge->getVertex1()->getId()) && hasVertex(edge->getVertex2()->getId()))
-	{
-		edges.push_back(e);
-	}
+	if (hasEdge(edge))
+		return false;
+	if (!(hasVertex(edge->getVertex1()->getId()) && hasVertex(edge->getVertex1()->getId())))
+		return false;
+
+	edges.push_back(Edge(getVertex(edge->getVertex1()->getId()), getVertex(edge->getVertex2()->getId()), edge->getWeight()));
+	update();
+	return true;
 }
 
-void Graph::addEdge(int vertex1, int vertex2, int weight)
+bool Graph::addEdge(int vertex1, int vertex2, int weight)
 {
-	if (hasVertex(vertex1) && hasVertex(vertex2))
-	{
-		Vertex * v1 = getVertex(vertex1);
-		Vertex * v2 = getVertex(vertex2);
-		edges.push_back(Edge(v1, v2, weight));
-	}
+	if (!(hasVertex(vertex1) && hasVertex(vertex2)))
+		return false;
+	Edge e(getVertex(vertex1), getVertex(vertex2), weight);
+	if (hasEdge(&e))
+		return false;
+	edges.push_back(e);
+	update();
+	return true;
 }
 
-void Graph::addEdge(int vertex1, int vertex2)
+bool Graph::addEdge(int vertex1, int vertex2)
 {
-	if (hasVertex(vertex1) && hasVertex(vertex2))
-	{
-		Vertex * v1 = getVertex(vertex1);
-		Vertex * v2 = getVertex(vertex2);
-		edges.push_back((Edge(v1, v2)));
-	}
+	if (!(hasVertex(vertex1) && hasVertex(vertex2)))
+		return false;
+	Edge e(getVertex(vertex1), getVertex(vertex2));
+	if (hasEdge(&e))
+		return false;
+	edges.push_back(e);
+	update();
+	return true;
 }
 
 void Graph::addVertex()
 {
-	vertex.push_back(Vertex(firstVertex()));
+	vertices.push_back(Vertex(firstVertex()));
+	update();
 }
 
 void Graph::addVertex(int count)
@@ -95,6 +105,7 @@ void Graph::addVertex(int count)
 	{
 		addVertex();
 	}
+	update();
 }
 
 void Graph::removeEdge(Edge * edge) 
@@ -105,6 +116,7 @@ void Graph::removeEdge(Edge * edge)
 			i--;
 		}
 	}
+	update();
 }
 
 void Graph::removeVertex(int id) 
@@ -117,13 +129,90 @@ void Graph::removeVertex(int id)
 			i--;
 		}
 	}
-	vertex.erase(vertex.begin() + id);
+	vertices.erase(vertices.begin() + id);
+	update();
 }
 
 void Graph::removeVertex(Vertex * vertex) 
 {
 	removeVertex(vertex->getId());
+	update();
 }
+
+//----- BEGIN ----------------------- matrices ------------------------------------
+
+void Graph::outputIncedenceMatrix()
+{
+	int line = vertices.size();
+	int column = edges.size();
+	std::cout << "     --- incedence matrix ---" << std::endl;
+	std::cout << "    | ";
+	for (int i = 0; i < column; i++)
+	{
+		std::cout << std::setw(2) << "e" << i + 1;
+	}
+	std::cout << std::endl;
+	for (int i = 0; i < column; i++)
+	{
+		std::cout << "----";
+	}
+	std::cout << std::endl;
+	for (int i = 0; i < line; i++)
+	{
+		std::cout << " v" << (i + 1) << " | ";
+		for (int j = 0; j < column; j++)
+		{
+			std::cout << std::setw(3) << incedenceMatrix[i][j];
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
+void Graph::outputAdjacencyMatrix()
+{
+	int line = vertices.size();
+	std::cout << "     --- adjacency matrix ---" << std::endl;
+	std::cout << "    | ";
+	for (int i = 0; i < line; i++)
+	{
+		std::cout << std::setw(2) << "v" << i + 1;
+	}
+	std::cout << std::endl;
+	for (int i = 0; i < line; i++)
+	{
+		std::cout << "----";
+	}
+	std::cout << std::endl;
+	for (int i = 0; i < line; i++)
+	{
+		std::cout << " v" << (i + 1) << " | ";
+		for (int j = 0; j < line; j++)
+		{
+			std::cout << std::setw(3) << adjacencyMatrix[i][j];
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
+
+int ** Graph::getAdjacencyMatrix()
+{
+	return adjacencyMatrix;
+}
+
+int ** Graph::getIncedenceMatrix()
+{
+	return incedenceMatrix;
+}
+
+void Graph::update()
+{
+	incedenceMatrix = createIncedenceMatrix();
+	adjacencyMatrix = createAdjacencyMatrix();
+}
+
+//------ END ------------------------ matrices --------------------------------------
 
 std::ostream& operator<<(std::ostream &strm, const Graph & ag) 
 {
@@ -134,9 +223,9 @@ std::ostream& operator<<(std::ostream &strm, const Graph & ag)
 	for (int i = 0; i < ag.edges.size(); i++) 
 	{
 		strm << ag.edges[i] << " | ";
-		if (i < ag.vertex.size()) 
+		if (i < ag.vertices.size())
 		{
-			strm << " " << ag.vertex[i];
+			strm << " " << ag.vertices[i];
 		}
 		strm << std::endl;
 	}

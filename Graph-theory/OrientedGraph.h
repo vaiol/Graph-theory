@@ -6,5 +6,7 @@ class OrientedGraph : public Graph
 public:
 	OrientedGraph();
 	~OrientedGraph();
-	Matrix incedenceMatrix();
+	int ** createIncedenceMatrix();
+	int ** createAdjacencyMatrix();
+	bool hasEdge(Edge * edge);
 };
