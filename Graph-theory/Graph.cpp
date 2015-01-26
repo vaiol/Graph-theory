@@ -16,7 +16,7 @@ bool Graph::hasVertex(int id)
 
 int Graph::firstVertex()
 {
-	for (int i = 0; i < vertex.size(); i++)
+	for (int i = 0; i < vertex.size(); i++)//lol
 	{
 		if (vertex[i].getId() != i+1)
 		{
