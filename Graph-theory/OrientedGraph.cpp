@@ -60,13 +60,13 @@ int ** OrientedGraph::createAdjacencyMatrix()
 	int **matrix = new int*[line];
 	for (int i = 0; i < line; i++)
 	{
-		matrix[i] = new int[column];
+		matrix[i] = new int[line];
 	}
 
 	//-----------fill an array
 	for (int i = 0; i < line; i++)
 	{
-		for (int j = 0; j < column; j++)
+		for (int j = 0; j < line; j++)
 		{
 			matrix[i][j] = 0;
 		}

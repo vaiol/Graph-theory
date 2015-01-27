@@ -27,6 +27,178 @@ int Graph::firstVertex()
 	return vertices.size() + 1;
 }
 
+int ** Graph::degreeMatrix(int ** matrix, int degree)
+{
+	//-------- declare and initialize the resulting matrix
+	int vertexCount = vertices.size();
+	int **result = new int*[vertexCount];
+	for (int i = 0; i < vertexCount; i++)
+	{
+		result[i] = new int[vertexCount];
+	}
+	//-------- declare and initialize the intermediate matrix
+	int **degreeMatrix = new int*[vertexCount];
+	for (int i = 0; i < vertexCount; i++)
+	{
+		degreeMatrix[i] = new int[vertexCount];
+	}
+	for (int i = 0; i < vertexCount; i++)
+	{
+		for (int j = 0; j < vertexCount; j++)
+		{
+			degreeMatrix[i][j] = matrix[i][j];
+		}
+	}
+	//--------- exponentiation matrix
+	for (int deg = 1; deg < degree; deg++)
+	{
+		for (int i = 0; i < vertexCount; i++)
+		{
+			for (int j = 0; j < vertexCount; j++)
+			{
+				int currentResult = 0;
+				for (int k = 0; k < vertexCount; k++)
+				{
+					currentResult += degreeMatrix[i][k] * matrix[k][j];
+				}
+				result[i][j] = currentResult;
+			}
+		}
+		for (int i = 0; i < vertexCount; i++)
+		{
+			for (int j = 0; j < vertexCount; j++)
+			{
+				degreeMatrix[i][j] = result[i][j];
+			}
+		}
+	}
+	return result;
+
+}
+
+int ** Graph::createDistanceMatrix()
+{
+	int vertexCount = vertices.size();
+	//--------- declare and initialize the resulting matrix 
+	int **result = new int*[vertexCount];
+	for (int i = 0; i < vertexCount; i++)
+		result[i] = new int[vertexCount];
+	//--------- fiil an matrix 
+	for (int i = 0; i < vertexCount; i++)
+	{
+		for (int j = 0; j < vertexCount; j++)
+		{
+			result[i][j] = adjacencyMatrix[i][j];
+			if (adjacencyMatrix[i][j] == 0)
+				result[i][j] = -1;
+		}
+	}
+	//--------- fill diagonal matrix with zeros
+	for (int i = 0; i < vertexCount; i++)
+	{
+		result[i][i] = 0;
+	}
+	//--------- create distance matrix
+	int degree = 2;
+	bool condition = true;
+	while (condition)
+	{
+		int ** degMatrix = degreeMatrix(adjacencyMatrix, degree);
+		for (int i = 0; i < vertexCount; i++)
+		{
+			for (int j = 0; j < vertexCount; j++)
+			{
+				if (result[i][j] < 0)
+				{
+					if (degMatrix[i][j] > 0)
+						result[i][j] = degree;
+				}
+
+			}
+		}
+		//-------- exit condition from the loop
+		condition = false;
+		for (int i = 0; i < vertexCount; i++)
+		{
+			for (int j = 0; j < vertexCount; j++)
+			{
+				if (result[i][j] == -1)
+					condition = true;
+
+				if (degree > vertices.size())
+					condition = false;
+			}
+		}
+		degree++;
+	}
+	return result;
+}
+
+int ** Graph::createReachabilityMatrix()
+{
+	int vertexCount = vertices.size();
+	//--------- declare and initialize the resulting matrix 
+	int **result = new int*[vertexCount];
+	for (int i = 0; i < vertexCount; i++)
+		result[i] = new int[vertexCount];
+	//--------- fiil an matrix 
+	for (int i = 0; i < vertexCount; i++)
+	{
+		for (int j = 0; j < vertexCount; j++)
+		{
+			result[i][j] = adjacencyMatrix[i][j];
+		}
+	}
+	int degree = 2;
+	bool condition = true;
+	while (condition)
+	{
+		int ** degMatrix = degreeMatrix(adjacencyMatrix, degree);
+		for (int i = 0; i < vertexCount; i++)
+		{
+			for (int j = 0; j < vertexCount; j++)
+			{
+				if (result[i][j] == 0)
+				{
+					if (degMatrix[i][j] > 0)
+						result[i][j] = 1;
+				}
+
+			}
+		}
+		//-------- exit condition from the loop
+		if (degree >= vertices.size())
+			condition = false;
+
+		degree++;
+	}
+	return result;
+}
+
+void Graph::outputSquareMatrix(int ** matrix, int line)
+{
+	std::cout << "    | ";
+	for (int i = 0; i < line; i++)
+	{
+		std::cout << std::setw(2) << "v" << i + 1;
+	}
+	std::cout << std::endl;
+	for (int i = 0; i < line; i++)
+	{
+		std::cout << "----";
+	}
+	std::cout << std::endl;
+	for (int i = 0; i < line; i++)
+	{
+		std::cout << " v" << (i + 1) << " | ";
+		for (int j = 0; j < line; j++)
+		{
+			std::cout << std::setw(3) << matrix[i][j];
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+}
 
 //======== END ======================= private method ================================
 
@@ -171,17 +343,24 @@ void Graph::outputIncedenceMatrix()
 
 void Graph::outputAdjacencyMatrix()
 {
-	int line = vertices.size();
 	std::cout << "     --- adjacency matrix ---" << std::endl;
+	outputSquareMatrix(adjacencyMatrix, vertices.size());
+}
+
+void Graph::outputDistanceMatrix()
+{
+	//--------output--------------
+	int line = vertices.size();
+	std::cout << "     --- distance matrix ---" << std::endl;
 	std::cout << "    | ";
 	for (int i = 0; i < line; i++)
 	{
-		std::cout << std::setw(2) << "v" << i + 1;
+		std::cout << std::setw(3) << "v" << i + 1;
 	}
 	std::cout << std::endl;
 	for (int i = 0; i < line; i++)
 	{
-		std::cout << "----";
+		std::cout << "-----";
 	}
 	std::cout << std::endl;
 	for (int i = 0; i < line; i++)
@@ -189,11 +368,20 @@ void Graph::outputAdjacencyMatrix()
 		std::cout << " v" << (i + 1) << " | ";
 		for (int j = 0; j < line; j++)
 		{
-			std::cout << std::setw(3) << adjacencyMatrix[i][j];
+			if (distanceMatrix[i][j] == -1)
+				std::cout << std::setw(4) << "inf";
+			else
+				std::cout << std::setw(4) << distanceMatrix[i][j];
 		}
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
+}
+
+void Graph::outputReachabilityMatrix()
+{
+	std::cout << "     --- reachability matrix ---" << std::endl;
+	outputSquareMatrix(reachabilityMatrix, vertices.size());
 }
 
 int ** Graph::getAdjacencyMatrix()
@@ -206,10 +394,17 @@ int ** Graph::getIncedenceMatrix()
 	return incedenceMatrix;
 }
 
+int ** Graph::getDistanceMatrix()
+{
+	return distanceMatrix;
+}
+
 void Graph::update()
 {
 	incedenceMatrix = createIncedenceMatrix();
 	adjacencyMatrix = createAdjacencyMatrix();
+	distanceMatrix = createDistanceMatrix();
+	reachabilityMatrix = createReachabilityMatrix();
 }
 
 //------ END ------------------------ matrices --------------------------------------
@@ -219,14 +414,23 @@ std::ostream& operator<<(std::ostream &strm, const Graph & ag)
 	strm << "------- Graph ------" << std::endl;
 	strm << "   EDGE    | VERTEX " << std::endl;
 	strm << "--------------------" << std::endl;
-	
-	for (int i = 0; i < ag.edges.size(); i++) 
+	int count;
+	if (ag.edges.size() > ag.vertices.size())
 	{
-		strm << ag.edges[i] << " | ";
+		count = ag.edges.size();
+	}
+	else
+	{
+		count = ag.vertices.size();
+	}
+	for (int i = 0; i < count; i++) 
+	{
+		if (i < ag.edges.size())
+			strm << ag.edges[i] << " | ";
+		else
+			strm << "           | ";
 		if (i < ag.vertices.size())
-		{
 			strm << " " << ag.vertices[i];
-		}
 		strm << std::endl;
 	}
 	return strm;
