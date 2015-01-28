@@ -47,6 +47,7 @@ public:
 	std::vector<std::vector<int>> getDistanceMatrix();
 	void update();
 	//---properties
+	int isHomogeneousGraph();
 	std::vector<std::vector<int>> getDegreeOfVertices();
 	std::vector<Vertex> getIsolatedVertices();
 	std::vector<Vertex> getHangingVertices();

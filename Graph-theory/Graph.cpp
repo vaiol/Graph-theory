@@ -401,6 +401,19 @@ void Graph::update()
 
 //----- BEGIN ---------------------- properties -------------------------------------
 
+
+int Graph::isHomogeneousGraph()
+{
+	std::vector<std::vector<int>> tmp = getDegreeOfVertices();
+	int degree = tmp[0][0];
+	for (int i = 0; i < tmp.size(); i++)
+	{
+		if (tmp[i][0] != degree)
+			return -1;
+	}
+	return degree;
+}
+
 std::vector<std::vector<int>> Graph::getDegreeOfVertices()
 {
 	std::vector<std::vector<int>> result(vertices.size());
@@ -478,6 +491,11 @@ void Graph::outputDegreeOfVertices()
 		std::cout << std::setw(2) << degreeOfVertices[i][1] << " )";
 		std::cout << std::endl;
 	}
+	int degreeOfGraph = isHomogeneousGraph();
+	if (degreeOfGraph > 0)
+		std::cout << " + Graph is homogeneous! \n  + Degree of graph: " << degreeOfGraph << std::endl;
+	else
+		std::cout << " + Graph isn't homogeneous!" << std::endl;
 }
 
 void Graph::outputIsolatedAndHangingVertices()
