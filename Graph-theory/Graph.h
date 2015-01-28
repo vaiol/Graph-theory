@@ -10,16 +10,16 @@ private:
 	int firstVertex();
 	virtual bool hasEdge(Edge * edge) = 0;
 	//---matrices
-	int ** incedenceMatrix;
-	int ** adjacencyMatrix;
-	int ** distanceMatrix;
-	int ** reachabilityMatrix;
-	virtual int ** createIncedenceMatrix() = 0;
-	virtual int ** createAdjacencyMatrix() = 0;
-	int ** createDistanceMatrix();
-	int ** createReachabilityMatrix();
-	int ** degreeMatrix(int ** matrix, int degree);
-	void outputSquareMatrix(int ** matrix, int line);
+	std::vector<std::vector<int>> incedenceMatrix;
+	std::vector<std::vector<int>> adjacencyMatrix;
+	std::vector<std::vector<int>> distanceMatrix;
+	std::vector<std::vector<int>> reachabilityMatrix;
+	virtual std::vector<std::vector<int>> createIncedenceMatrix() = 0;
+	virtual std::vector<std::vector<int>> createAdjacencyMatrix() = 0;
+	std::vector<std::vector<int>> createDistanceMatrix();
+	std::vector<std::vector<int>> createReachabilityMatrix();
+	std::vector<std::vector<int>> degreeMatrix(std::vector<std::vector<int>> matrix, int degree);
+	void outputSquareMatrix(std::vector<std::vector<int>> matrix, int line);
 protected:
 	std::vector<Edge> edges;
 	std::vector<Vertex> vertices;
@@ -42,13 +42,16 @@ public:
 	void outputAdjacencyMatrix();
 	void outputDistanceMatrix();
 	void outputReachabilityMatrix();
-	int ** getAdjacencyMatrix();
-	int ** getIncedenceMatrix();
-	int ** getDistanceMatrix();
+	std::vector<std::vector<int>> getAdjacencyMatrix();
+	std::vector<std::vector<int>> getIncedenceMatrix();
+	std::vector<std::vector<int>> getDistanceMatrix();
 	void update();
 	//---properties
 	std::vector<std::vector<int>> getDegreeOfVertices();
+	std::vector<Vertex> getIsolatedVertices();
+	std::vector<Vertex> getHangingVertices();
 	void outputDegreeOfVertices();
+	void outputIsolatedAndHangingVertices();
 	//---operators
 	friend std::ostream& operator<<(std::ostream&, const Graph&);
 };

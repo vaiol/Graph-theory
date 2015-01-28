@@ -25,6 +25,7 @@ int main() {
 	graph->outputDistanceMatrix();
 	graph->outputReachabilityMatrix();
 	graph->outputDegreeOfVertices();
+	graph->outputIsolatedAndHangingVertices();
 
 
 

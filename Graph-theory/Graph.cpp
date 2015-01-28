@@ -27,23 +27,19 @@ int Graph::firstVertex()
 	return vertices.size() + 1;
 }
 
-int ** Graph::degreeMatrix(int ** matrix, int degree)
+std::vector<std::vector<int>> Graph::degreeMatrix(std::vector<std::vector<int>> matrix, int degree)
 {
-	//-------- declare and initialize the resulting matrix
 	int vertexCount = vertices.size();
-	int **result = new int*[vertexCount];
-	for (int i = 0; i < vertexCount; i++)
-	{
-		result[i] = new int[vertexCount];
-	}
+	//-------- declare the resulting matrix
+	std::vector<std::vector<int>> result(vertexCount);
+
 	//-------- declare and initialize the intermediate matrix
-	int **degreeMatrix = new int*[vertexCount];
+	std::vector<std::vector<int>> degreeMatrix(vertexCount);
+
 	for (int i = 0; i < vertexCount; i++)
 	{
-		degreeMatrix[i] = new int[vertexCount];
-	}
-	for (int i = 0; i < vertexCount; i++)
-	{
+		result[i].resize(vertexCount); //initialize the resulting matrix
+		degreeMatrix[i].resize(vertexCount); //initialize intermediate matrix
 		for (int j = 0; j < vertexCount; j++)
 		{
 			degreeMatrix[i][j] = matrix[i][j];
@@ -76,42 +72,37 @@ int ** Graph::degreeMatrix(int ** matrix, int degree)
 
 }
 
-int ** Graph::createDistanceMatrix()
+std::vector<std::vector<int>> Graph::createDistanceMatrix()
 {
 	int vertexCount = vertices.size();
-	//--------- declare and initialize the resulting matrix 
-	int **result = new int*[vertexCount];
-	for (int i = 0; i < vertexCount; i++)
-		result[i] = new int[vertexCount];
+	//--------- declare the resulting matrix 
+	std::vector<std::vector<int>> result(vertexCount);
 	//--------- fiil an matrix 
 	for (int i = 0; i < vertexCount; i++)
 	{
+		result[i].resize(vertexCount); // declare the resulting matrix 
 		for (int j = 0; j < vertexCount; j++)
 		{
 			result[i][j] = adjacencyMatrix[i][j];
 			if (adjacencyMatrix[i][j] == 0)
 				result[i][j] = -1;
 		}
+		result[i][i] = 0; //fill diagonal matrix with zeros
 	}
-	//--------- fill diagonal matrix with zeros
-	for (int i = 0; i < vertexCount; i++)
-	{
-		result[i][i] = 0;
-	}
+
 	//--------- create distance matrix
 	int degree = 2;
 	bool condition = true;
 	while (condition)
 	{
-		int ** degMatrix = degreeMatrix(adjacencyMatrix, degree);
+		std::vector<std::vector<int>>  degMatrix = degreeMatrix(adjacencyMatrix, degree);
 		for (int i = 0; i < vertexCount; i++)
 		{
 			for (int j = 0; j < vertexCount; j++)
 			{
-				if (result[i][j] < 0)
+				if (result[i][j] < 0 && degMatrix[i][j] > 0)
 				{
-					if (degMatrix[i][j] > 0)
-						result[i][j] = degree;
+					result[i][j] = degree;
 				}
 
 			}
@@ -134,16 +125,16 @@ int ** Graph::createDistanceMatrix()
 	return result;
 }
 
-int ** Graph::createReachabilityMatrix()
+std::vector<std::vector<int>> Graph::createReachabilityMatrix()
 {
 	int vertexCount = vertices.size();
-	//--------- declare and initialize the resulting matrix 
-	int **result = new int*[vertexCount];
-	for (int i = 0; i < vertexCount; i++)
-		result[i] = new int[vertexCount];
+	//--------- declare the resulting matrix 
+	std::vector<std::vector<int>> result(vertexCount);
+		
 	//--------- fiil an matrix 
 	for (int i = 0; i < vertexCount; i++)
 	{
+		result[i].resize(vertexCount); 
 		for (int j = 0; j < vertexCount; j++)
 		{
 			result[i][j] = adjacencyMatrix[i][j];
@@ -153,15 +144,14 @@ int ** Graph::createReachabilityMatrix()
 	bool condition = true;
 	while (condition)
 	{
-		int ** degMatrix = degreeMatrix(adjacencyMatrix, degree);
+		std::vector<std::vector<int>> degMatrix = degreeMatrix(adjacencyMatrix, degree);
 		for (int i = 0; i < vertexCount; i++)
 		{
 			for (int j = 0; j < vertexCount; j++)
 			{
-				if (result[i][j] == 0)
+				if (result[i][j] == 0 && degMatrix[i][j] > 0)
 				{
-					if (degMatrix[i][j] > 0)
-						result[i][j] = 1;
+					result[i][j] = 1;
 				}
 
 			}
@@ -175,7 +165,7 @@ int ** Graph::createReachabilityMatrix()
 	return result;
 }
 
-void Graph::outputSquareMatrix(int ** matrix, int line)
+void Graph::outputSquareMatrix(std::vector<std::vector<int>> matrix, int line)
 {
 	std::cout << "    | ";
 	for (int i = 0; i < line; i++)
@@ -384,17 +374,17 @@ void Graph::outputReachabilityMatrix()
 	outputSquareMatrix(reachabilityMatrix, vertices.size());
 }
 
-int ** Graph::getAdjacencyMatrix()
+std::vector<std::vector<int>> Graph::getAdjacencyMatrix()
 {
 	return adjacencyMatrix;
 }
 
-int ** Graph::getIncedenceMatrix()
+std::vector<std::vector<int>> Graph::getIncedenceMatrix()
 {
 	return incedenceMatrix;
 }
 
-int ** Graph::getDistanceMatrix()
+std::vector<std::vector<int>> Graph::getDistanceMatrix()
 {
 	return distanceMatrix;
 }
@@ -434,13 +424,52 @@ std::vector<std::vector<int>> Graph::getDegreeOfVertices()
 	}
 	return result;
 }
+
+std::vector<Vertex> Graph::getIsolatedVertices()
+{
+	std::vector<Vertex> result;
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		bool condition = true;
+		for (int j = 0; j < edges.size(); j++)
+		{
+			if (edges[j].getVertex1() == &vertices[i] || edges[j].getVertex2() == &vertices[i])
+				condition = false;
+		}
+		if (condition)
+			result.push_back(vertices[i]);
+	}
+	return result;
+}
+
+std::vector<Vertex> Graph::getHangingVertices()
+{
+	std::vector<Vertex> result;
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		bool b1 = true;
+		bool b2 = true;
+		for (int j = 0; j < edges.size(); j++)
+		{
+			if (edges[j].getVertex1() == &vertices[i])
+				b1 = false;
+			if (edges[j].getVertex2() == &vertices[i])
+				b2 = false;
+
+		}
+		if ((!b1 && b2) || (b1 && !b2))
+			result.push_back(vertices[i]);
+	}
+	return result;
+}
+
 void Graph::outputDegreeOfVertices()
 {
 	std::vector<std::vector<int>> degreeOfVertices = getDegreeOfVertices();
 
 	std::cout << "----degree of vertices----" << std::endl;
 	std::cout << " vertex | degree ( I | O )" << std::endl;
-	std::cout << "--------------------------" << std::endl;
+	std::cout << "--------|-----------------" << std::endl;
 	for (int i = 0; i < degreeOfVertices.size(); i++)
 	{
 		std::cout << std::setw(5) << vertices[i].getId() << "   |";
@@ -451,6 +480,31 @@ void Graph::outputDegreeOfVertices()
 	}
 }
 
+void Graph::outputIsolatedAndHangingVertices()
+{
+	std::vector<Vertex> isolated = getIsolatedVertices();
+	std::vector<Vertex> hanging = getHangingVertices();
+
+	std::cout << "--outcasts vertices--" << std::endl;
+	std::cout << " Isolated |  Hanging " << std::endl;
+	std::cout << "----------|----------" << std::endl;
+	int maxSize = 0;
+	if (isolated.size() > hanging.size())
+		maxSize = isolated.size();
+	else
+		maxSize = hanging.size();
+
+	for (int i = 0; i < maxSize; i++)
+	{
+		if (isolated.size() > i)
+			std::cout << std::setw(6) << isolated[i].getId() << "    |";
+		else
+			std::cout << "          |";
+		if (hanging.size() > i)
+			std::cout << std::setw(6) << hanging[i].getId();
+		std::cout << std::endl;
+	}
+}
 
 //------ END ----------------------- properties -------------------------------------
 
@@ -460,15 +514,11 @@ std::ostream& operator<<(std::ostream &strm, const Graph & ag)
 	strm << "------- Graph ------" << std::endl;
 	strm << "   EDGE    | VERTEX " << std::endl;
 	strm << "--------------------" << std::endl;
-	int count;
+	int count = 0;
 	if (ag.edges.size() > ag.vertices.size())
-	{
 		count = ag.edges.size();
-	}
 	else
-	{
 		count = ag.vertices.size();
-	}
 	for (int i = 0; i < count; i++) 
 	{
 		if (i < ag.edges.size())
