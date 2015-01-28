@@ -409,6 +409,52 @@ void Graph::update()
 
 //------ END ------------------------ matrices --------------------------------------
 
+//----- BEGIN ---------------------- properties -------------------------------------
+
+std::vector<std::vector<int>> Graph::getDegreeOfVertices()
+{
+	std::vector<std::vector<int>> result(vertices.size());
+
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		result[i].resize(3);
+		for (int j = 0; j < edges.size(); j++)
+		{
+			if (*(edges[j].getVertex1()) == vertices[i])
+			{
+				result[i][1]++; //output degree of vertices
+				result[i][0]++; //common degree of vertices
+			}
+			if (*(edges[j].getVertex2()) == vertices[i])
+			{
+				result[i][2]++; //input degree of vertices
+				result[i][0]++; //common degree of vertices
+			}
+		}
+	}
+	return result;
+}
+void Graph::outputDegreeOfVertices()
+{
+	std::vector<std::vector<int>> degreeOfVertices = getDegreeOfVertices();
+
+	std::cout << "----degree of vertices----" << std::endl;
+	std::cout << " vertex | degree ( I | O )" << std::endl;
+	std::cout << "--------------------------" << std::endl;
+	for (int i = 0; i < degreeOfVertices.size(); i++)
+	{
+		std::cout << std::setw(5) << vertices[i].getId() << "   |";
+		std::cout << std::setw(5) << degreeOfVertices[i][0] << "   (";
+		std::cout << std::setw(2) << degreeOfVertices[i][2] << " |";
+		std::cout << std::setw(2) << degreeOfVertices[i][1] << " )";
+		std::cout << std::endl;
+	}
+}
+
+
+//------ END ----------------------- properties -------------------------------------
+
+
 std::ostream& operator<<(std::ostream &strm, const Graph & ag) 
 {
 	strm << "------- Graph ------" << std::endl;

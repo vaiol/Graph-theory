@@ -46,6 +46,9 @@ public:
 	int ** getIncedenceMatrix();
 	int ** getDistanceMatrix();
 	void update();
+	//---properties
+	std::vector<std::vector<int>> getDegreeOfVertices();
+	void outputDegreeOfVertices();
 	//---operators
 	friend std::ostream& operator<<(std::ostream&, const Graph&);
 };
