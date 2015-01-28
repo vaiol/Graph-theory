@@ -1,3 +1,4 @@
+#pragma once
 #include "Edge.h"
 
 Edge::Edge(Vertex * vertex1, Vertex * vertex2, int weight)
