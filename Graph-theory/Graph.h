@@ -19,6 +19,7 @@ private:
 	std::vector<std::vector<int>> createDistanceMatrix();
 	std::vector<std::vector<int>> createReachabilityMatrix();
 	std::vector<std::vector<int>> degreeMatrix(std::vector<std::vector<int>> matrix, int degree);
+	std::vector<std::vector<int>> transposeMatrix(std::vector<std::vector<int>> matrix);
 	void outputSquareMatrix(std::vector<std::vector<int>> matrix, int line);
 protected:
 	std::vector<Edge> edges;
@@ -45,9 +46,17 @@ public:
 	std::vector<std::vector<int>> getAdjacencyMatrix();
 	std::vector<std::vector<int>> getIncedenceMatrix();
 	std::vector<std::vector<int>> getDistanceMatrix();
+	std::vector<std::vector<int>> getReachabilityMatrix();
 	void update();
 	//---properties
 	int isHomogeneousGraph();
+	//BEGIN-connectivity
+	bool isStronglyConnectedGraph();
+	bool isUnilaterallyConnectedGraph();
+	bool isWeaklyConnectedGraph();
+	bool isDisconnectedGraph();
+	void outputConnectivity();
+	//END-connectivity
 	std::vector<std::vector<int>> getDegreeOfVertices();
 	std::vector<Vertex> getIsolatedVertices();
 	std::vector<Vertex> getHangingVertices();

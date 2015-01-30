@@ -389,6 +389,11 @@ std::vector<std::vector<int>> Graph::getDistanceMatrix()
 	return distanceMatrix;
 }
 
+std::vector<std::vector<int>> Graph::getReachabilityMatrix()
+{
+	return reachabilityMatrix;
+}
+
 void Graph::update()
 {
 	incedenceMatrix = createIncedenceMatrix();
@@ -412,6 +417,48 @@ int Graph::isHomogeneousGraph()
 			return -1;
 	}
 	return degree;
+}
+
+bool Graph::isStronglyConnectedGraph()
+{
+	std::vector<std::vector<int>> matrix = getReachabilityMatrix();
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix[i].size(); j++)
+		{
+			if (matrix[i][j] != 1)
+				return false;
+		}
+	}
+	return true;
+}
+
+bool Graph::isUnilaterallyConnectedGraph()
+{
+	std::vector<std::vector<int>> matrix = getReachabilityMatrix();
+	for (int i = 0; i < matrix.size(); i++)
+		matrix[i][i] = 1;
+	return true;
+	
+}
+bool Graph::isWeaklyConnectedGraph()
+{
+	return true;
+}
+bool Graph::isDisconnectedGraph()
+{
+	return true;
+}
+void Graph::outputConnectivity()
+{
+	if (isStronglyConnectedGraph())
+		std::cout << std::endl << "This graph is strongly connected!" << std::endl;
+	else if (isUnilaterallyConnectedGraph())
+		std::cout << std::endl << "This graph is unilaterally connected!" << std::endl;
+	else if (isWeaklyConnectedGraph())
+		std::cout << std::endl << "This graph is weakly connected!" << std::endl;
+	else if (isDisconnectedGraph())
+		std::cout << std::endl << "This graph is disconnected!" << std::endl;
 }
 
 std::vector<std::vector<int>> Graph::getDegreeOfVertices()
