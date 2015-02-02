@@ -20,6 +20,7 @@ private:
 	std::vector<std::vector<int>> createReachabilityMatrix();
 	std::vector<std::vector<int>> degreeMatrix(std::vector<std::vector<int>> matrix, int degree);
 	std::vector<std::vector<int>> transposeMatrix(std::vector<std::vector<int>> matrix);
+	std::vector<std::vector<int>> concatenationMatrices(std::vector<std::vector<int>> matrix1, std::vector<std::vector<int>> matrix2);
 	void outputSquareMatrix(std::vector<std::vector<int>> matrix, int line);
 protected:
 	std::vector<Edge> edges;

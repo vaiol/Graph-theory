@@ -190,6 +190,36 @@ void Graph::outputSquareMatrix(std::vector<std::vector<int>> matrix, int line)
 	std::cout << std::endl;
 }
 
+std::vector<std::vector<int>> Graph::transposeMatrix(std::vector<std::vector<int>> matrix)
+{
+	std::vector<std::vector<int>> result(matrix[0].size());
+	for (int i = 0; i < result.size(); i++)
+		result[i].resize(matrix.size());
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix[i].size(); j++)
+		{
+			result[j][i] = matrix[i][j];
+		}
+	}
+	return result;
+}
+
+std::vector<std::vector<int>> Graph::concatenationMatrices(std::vector<std::vector<int>> matrix1, std::vector<std::vector<int>> matrix2)
+{
+	std::vector<std::vector<int>> result(matrix1.size());
+	for (int i = 0; i < result.size(); i++)
+	{
+		result[i].resize(matrix1[i].size());
+		for (int j = 0; j < result[i].size(); j++)
+		{
+			result[i][j] = matrix1[i][j] + matrix2[i][j];
+		}
+	}
+	return result;
+}
+
 //======== END ======================= private method ================================
 
 //======= BEGIN ====================== common method =================================
