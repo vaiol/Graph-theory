@@ -28,6 +28,7 @@ protected:
 public:
 	//---graphs
 	Graph();
+	Graph(Graph * graph);
 	~Graph();
 	Edge * getEdge(int id);
 	Vertex * getVertex(int id);
@@ -53,7 +54,6 @@ public:
 	int isHomogeneousGraph();
 	//BEGIN-connectivity
 	bool isStronglyConnectedGraph();
-	bool isUnilaterallyConnectedGraph();
 	bool isWeaklyConnectedGraph();
 	bool isDisconnectedGraph();
 	void outputConnectivity();
