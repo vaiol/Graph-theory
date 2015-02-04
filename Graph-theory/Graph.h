@@ -52,9 +52,11 @@ public:
 	void update();
 	//---properties
 	int isHomogeneousGraph();
+	bool hasCycle();
 	//BEGIN-connectivity
 	bool isStronglyConnectedGraph();
 	bool isWeaklyConnectedGraph();
+	bool isUnilaterallyConnectedGraph();
 	bool isDisconnectedGraph();
 	void outputConnectivity();
 	//END-connectivity

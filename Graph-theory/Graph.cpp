@@ -470,73 +470,16 @@ bool Graph::isStronglyConnectedGraph()
 	return true;
 }
 
-
-bool Graph::isWeaklyConnectedGraph()
+bool Graph::isUnilaterallyConnectedGraph()
 {
-	/*
 	if (isStronglyConnectedGraph())
 		return true;
-	if (isUnilaterallyConnectedGraph())
-		return true;
-
-	std::vector<std::vector<int>> matrix = getAdjacencyMatrix();
-
-	for (int i = 0; i < matrix.size(); i++)
-		matrix[i][i] = 1;
-	matrix = concatenationMatrices(matrix, transposeMatrix(matrix));
-
-	//do....
-	int vertexCount = vertices.size();
-	//--------- declare the resulting matrix 
-	std::vector<std::vector<int>> result(vertexCount);
-
-	//--------- fiil an matrix 
-	for (int i = 0; i < vertexCount; i++)
-	{
-		result[i].resize(vertexCount);
-		for (int j = 0; j < vertexCount; j++)
-		{
-			result[i][j] = matrix[i][j];
-		}
-	}
-	int degree = 2;
-	bool condition = true;
-	while (condition)
-	{
-		std::vector<std::vector<int>> degMatrix = degreeMatrix(matrix, degree);
-		for (int i = 0; i < vertexCount; i++)
-		{
-			for (int j = 0; j < vertexCount; j++)
-			{
-				if (result[i][j] == 0 && degMatrix[i][j] > 0)
-				{
-					result[i][j] = 1;
-				}
-
-			}
-		}
-		//-------- exit condition from the loop
-		if (degree >= vertices.size())
-			condition = false;
-
-		degree++;
-	}
-
-	//---check
-	for (int i = 0; i < result.size(); i++)
-	{
-		for (int j = 0; j < result[i].size(); j++)
-		{
-			if (result[i][j] != 1)
-				return false;
-		}
-	}
-	return true;
-	*/
 	std::vector<std::vector<int>> matrix = getReachabilityMatrix();
+	matrix = concatenationMatrices(matrix, transposeMatrix(matrix));
 	for (int i = 0; i < matrix.size(); i++)
 		matrix[i][i] = 1;
-	matrix = concatenationMatrices(matrix, transposeMatrix(matrix));
+
+
 	for (int i = 0; i < matrix.size(); i++)
 	{
 		for (int j = 0; j < matrix[i].size(); j++)
@@ -546,6 +489,32 @@ bool Graph::isWeaklyConnectedGraph()
 		}
 	}
 	return true;
+
+	
+}
+
+bool Graph::isWeaklyConnectedGraph()
+{
+	if (isStronglyConnectedGraph())
+		return true;
+	if (isUnilaterallyConnectedGraph())
+		return true;
+	
+	std::vector<std::vector<int>> matrix = getAdjacencyMatrix();
+	matrix = concatenationMatrices(matrix, transposeMatrix(matrix));
+	for (int i = 0; i < matrix.size(); i++)
+		matrix[i][i] = 1;
+	matrix = degreeMatrix(matrix, matrix.size());
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix[i].size(); j++)
+		{
+			if (matrix[i][j] == 0)
+				return false;
+		}
+	}
+	return true;
+
 }
 
 bool Graph::isDisconnectedGraph()
@@ -554,6 +523,8 @@ bool Graph::isDisconnectedGraph()
 		return false;
 	if (isWeaklyConnectedGraph())
 		return false;
+	if (isUnilaterallyConnectedGraph())
+		return false;
 	return true;
 }
 
@@ -561,12 +532,24 @@ void Graph::outputConnectivity()
 {
 	if (isStronglyConnectedGraph())
 		std::cout << std::endl << "This graph is strongly connected!" << std::endl;
+	else if (isUnilaterallyConnectedGraph())
+		std::cout << std::endl << "This graph is unilaterally connected!" << std::endl;
 	else if (isWeaklyConnectedGraph())
 		std::cout << std::endl << "This graph is weakly connected!" << std::endl;
 	else if (isDisconnectedGraph())
 		std::cout << std::endl << "This graph is disconnected!" << std::endl;
 	else
-		std::cout << std::endl << "NLO" << std::endl;
+		std::cout << std::endl << "ERROR!!! (outputConnectivity())" << std::endl;
+}
+
+bool Graph::hasCycle()
+{
+	for (int i = 0; i < reachabilityMatrix.size(); i++)
+	{
+		if (reachabilityMatrix[i][i] > 0)
+			return true;
+	}
+	return false;
 }
 
 std::vector<std::vector<int>> Graph::getDegreeOfVertices()
