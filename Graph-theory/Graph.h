@@ -1,6 +1,7 @@
 #pragma once
 #include "Edge.h"
 #include <vector>
+#include <queue>
 
 class Graph 
 {
@@ -65,6 +66,8 @@ public:
 	std::vector<Vertex> getHangingVertices();
 	void outputDegreeOfVertices();
 	void outputIsolatedAndHangingVertices();
+	//---algorithms
+	void BFS(Vertex * vertex);
 	//---operators
 	friend std::ostream& operator<<(std::ostream&, const Graph&);
 };

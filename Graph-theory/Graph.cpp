@@ -264,7 +264,7 @@ bool Graph::addEdge(Edge * edge)
 		return false;
 
 	edges.push_back(Edge(getVertex(edge->getVertex1()->getId()), getVertex(edge->getVertex2()->getId()), edge->getWeight()));
-	update();
+	//update();
 	return true;
 }
 
@@ -276,7 +276,7 @@ bool Graph::addEdge(int vertex1, int vertex2, int weight)
 	if (hasEdge(&e))
 		return false;
 	edges.push_back(e);
-	update();
+	//update();
 	return true;
 }
 
@@ -288,14 +288,14 @@ bool Graph::addEdge(int vertex1, int vertex2)
 	if (hasEdge(&e))
 		return false;
 	edges.push_back(e);
-	update();
+	//update();
 	return true;
 }
 
 void Graph::addVertex()
 {
 	vertices.push_back(Vertex(firstVertex()));
-	update();
+	//update();
 }
 
 void Graph::addVertex(int count)
@@ -304,7 +304,7 @@ void Graph::addVertex(int count)
 	{
 		addVertex();
 	}
-	update();
+	//update();
 }
 
 void Graph::removeEdge(Edge * edge) 
@@ -315,7 +315,7 @@ void Graph::removeEdge(Edge * edge)
 			i--;
 		}
 	}
-	update();
+	//update();
 }
 
 void Graph::removeVertex(int id) 
@@ -329,13 +329,13 @@ void Graph::removeVertex(int id)
 		}
 	}
 	vertices.erase(vertices.begin() + id);
-	update();
+	//update();
 }
 
 void Graph::removeVertex(Vertex * vertex) 
 {
 	removeVertex(vertex->getId());
-	update();
+	//update();
 }
 
 //----- BEGIN ----------------------- matrices ------------------------------------
@@ -663,6 +663,84 @@ void Graph::outputIsolatedAndHangingVertices()
 }
 
 //------ END ----------------------- properties -------------------------------------
+
+//----- BEGIN ---------------------- algorithms -------------------------------------
+
+void Graph::BFS(Vertex * vertex)
+{
+	
+	//vector < vector<int> > g;  
+	int startVertex = vertex->getId(); // int s
+
+	std::vector<int> queue;
+
+	queue.push_back(startVertex);
+
+	std::vector<bool> used(vertices.size()+1);
+	std::vector<int> parent(vertices.size()+1); // p 
+	std::vector<int> pathLength(vertices.size()+1); // d
+
+	used[startVertex] = true;
+	parent[startVertex] = -1;
+
+	int countOfCurrentVertex = 0;
+
+	{ //output:
+		std::cout << " VERTEX | BFS count |     QUEUE    " << std::endl;
+		std::cout << "----------------------------------" << std::endl;
+	}
+
+	while (!queue.empty()) 
+	{
+		countOfCurrentVertex++;
+		int currentVertex = queue.front();
+
+		{ //output:
+			std::cout << std::setw(5) << currentVertex << "  |" << std::setw(5) << countOfCurrentVertex << "  | ";
+			for (int i = 0; i < queue.size(); i--)
+			{
+				std::cout << queue[i] << " ";
+			}
+			std::cout << std::endl;
+		}
+		
+		queue.erase(queue.begin());
+		for (size_t i = 0; i< adjacencyMatrix[currentVertex - 1].size(); i++)
+		{
+			if (adjacencyMatrix[currentVertex - 1][i] > 0)
+			{
+				int someVertex = i + 1;
+				if (!used[someVertex])
+				{
+					used[someVertex] = true;
+					queue.push_back(someVertex);
+
+					pathLength[someVertex] = pathLength[currentVertex] + 1;
+					parent[someVertex] = currentVertex;
+				}
+			}
+			
+		}
+	}
+	/*
+	//≈сли теперь надо восстановить и вывести кратчайший путь до какой - то вершины \rm to, это можно сделать следующим образом :
+
+
+	if (!used[to])
+		cout << "No path!";
+	else {
+		vector<int> path;
+		for (int v = to; v != -1; v = p[v])
+			path.push_back(v);
+		reverse(path.begin(), path.end());
+		cout << "Path: ";
+		for (size_t i = 0; i<path.size(); ++i)
+			cout << path[i] + 1 << " ";
+	}
+	*/
+}
+
+//------ END ----------------------- algorithms -------------------------------------
 
 
 std::ostream& operator<<(std::ostream &strm, const Graph & ag) 
