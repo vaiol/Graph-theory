@@ -74,7 +74,8 @@ public:
 	//BFS
 	void BFS(int startVertex);
 	std::vector<int> getPathBFS(int start, int end);
-
+	//DFS
+	void DFS(int startVertex);
 	//---operators
 	friend std::ostream& operator<<(std::ostream&, const Graph&);
 };

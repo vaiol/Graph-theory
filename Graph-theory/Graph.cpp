@@ -666,79 +666,6 @@ void Graph::outputIsolatedAndHangingVertices()
 
 //----- BEGIN ---------------------- algorithms -------------------------------------
 
-void Graph::BFS(int startVertex)
-{
-	if (!hasVertex(startVertex))
-	{ // chech error
-		std::cout << " !!! BFS bypassing is not available!" << std::endl;
-		return;
-	}
-
-	std::vector<int> queue;
-	std::vector<bool> used(vertices.size() + 1);
-	std::vector<int> parent(vertices.size() + 1); 
-	std::vector<int> pathLength(vertices.size() + 1); 
-
-	queue.push_back(startVertex);
-	used[startVertex] = true;
-	parent[startVertex] = -1;
-	
-	//output:
-	int countOfCurrentVertex = 0;
-	{ 
-		countOfCurrentVertex++;
-		std::cout << " VERTEX | BFS count |  QUEUE    " << std::endl;
-		std::cout << "--------------------------------" << std::endl;
-		std::cout << std::setw(5) << startVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
-		for (int i = 0; i < queue.size(); i++)
-		{
-			std::cout << queue[i] << " ";
-		}
-		std::cout << std::endl;
-	}
-
-	while (!queue.empty()) 
-	{
-		int currentVertex = queue.front();
-
-		for (size_t i = 0; i< adjacencyMatrix[currentVertex - 1].size(); i++)
-		{
-			if (adjacencyMatrix[currentVertex - 1][i] > 0)
-			{
-				int someVertex = i + 1;
-				if (!used[someVertex])
-				{
-					used[someVertex] = true;
-					queue.push_back(someVertex);
-					pathLength[someVertex] = pathLength[currentVertex] + 1;
-					parent[someVertex] = currentVertex;
-					{ //output:
-						countOfCurrentVertex++;
-						std::cout << std::setw(5) << someVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
-						for (int i = 0; i < queue.size(); i++)
-						{
-							std::cout << queue[i] << " ";
-						}
-						std::cout << std::endl;
-					}
-				}
-			}
-			
-		}
-		queue.erase(queue.begin());
-		{ //output:
-			std::cout << "    -   |     -     |  ";
-			for (int i = 0; i < queue.size(); i++)
-			{
-				std::cout << queue[i] << " ";
-			}
-			if (queue.size() == 0)
-				std::cout << "- ";
-			std::cout << std::endl;
-		}
-	}
-}
-
 void Graph::outputPath(int start, int end)
 {
 	std::cout << " PATH " << start << " - " << end << ": ";
@@ -772,6 +699,77 @@ int Graph::getLengthPath(int start, int end)
 	if (!hasPath(start, end))
 		return -1;
 	return distanceMatrix[start - 1][end  - 1];
+}
+
+//---BFS
+void Graph::BFS(int startVertex)
+{
+	if (!hasVertex(startVertex))
+	{ // chech error
+		std::cout << " !!! BFS bypassing is not available!" << std::endl;
+		return;
+	}
+
+	std::vector<int> queue;
+	std::vector<bool> used(vertices.size() + 1);
+	std::vector<int> parent(vertices.size() + 1);
+	std::vector<int> pathLength(vertices.size() + 1);
+
+	queue.push_back(startVertex);
+	used[startVertex] = true;
+	parent[startVertex] = -1;
+
+	//output:
+	int countOfCurrentVertex = 0;
+	{
+		countOfCurrentVertex++;
+		std::cout << " VERTEX | BFS count |  QUEUE    " << std::endl;
+		std::cout << "--------------------------------" << std::endl;
+		std::cout << std::setw(5) << startVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
+		for (int i = 0; i < queue.size(); i++)
+		{
+			std::cout << queue[i] << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	while (!queue.empty())
+	{
+		int currentVertex = queue.front();
+
+		for (size_t i = 0; i< adjacencyMatrix[currentVertex - 1].size(); i++)
+		{
+			int someVertex = i + 1;
+			if (adjacencyMatrix[currentVertex - 1][i] > 0 && !used[someVertex])
+			{
+				used[someVertex] = true;
+				queue.push_back(someVertex);
+				pathLength[someVertex] = pathLength[currentVertex] + 1;
+				parent[someVertex] = currentVertex;
+				{ //output:
+					countOfCurrentVertex++;
+					std::cout << std::setw(5) << someVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
+					for (int i = 0; i < queue.size(); i++)
+					{
+						std::cout << queue[i] << " ";
+					}
+					std::cout << std::endl;
+				}
+			}
+
+		}
+		queue.erase(queue.begin());
+		{ //output:
+			std::cout << "    -   |     -     |  ";
+			for (int i = 0; i < queue.size(); i++)
+			{
+				std::cout << queue[i] << " ";
+			}
+			if (queue.size() == 0)
+				std::cout << "- ";
+			std::cout << std::endl;
+		}
+	}
 }
 
 std::vector<int> Graph::getPathBFS(int start, int end)
@@ -835,6 +833,76 @@ std::vector<int> Graph::getPathBFS(int start, int end)
 	return returnResult;
 }
 
+//---DFS
+
+void Graph::DFS(int startVertex)
+{
+	if (!hasVertex(startVertex))
+	{ // chech error
+		std::cout << " !!! DFS bypassing is not available!" << std::endl;
+		return;
+	}
+
+	std::vector<int> queue;
+	std::vector<bool> used(vertices.size() + 1);
+	queue.push_back(startVertex);
+	used[startVertex] = true;
+
+	//output:
+	int countOfCurrentVertex = 0;
+	{
+		countOfCurrentVertex++;
+		std::cout << " VERTEX | DFS count |  QUEUE    " << std::endl;
+		std::cout << "--------------------------------" << std::endl;
+		std::cout << std::setw(5) << startVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
+		for (int i = 0; i < queue.size(); i++)
+			std::cout << queue[i] << " ";
+		std::cout << std::endl;
+	}//::output
+
+	int currentVertex = queue.back();
+	while (!queue.empty())
+	{
+		currentVertex = queue.back();
+		bool condition = false;
+		for (int i = 0; i < adjacencyMatrix[currentVertex - 1].size(); i++)
+		{
+			int someVertex = i + 1;
+			if (adjacencyMatrix[currentVertex - 1][i] > 0 && !used[someVertex])
+			{
+				used[someVertex] = true;
+				queue.push_back(someVertex);
+				condition = true;
+				
+				{ //output:
+					countOfCurrentVertex++;
+					std::cout << std::setw(5) << someVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
+					for (int i = 0; i < queue.size(); i++)
+						std::cout << queue[i] << " ";
+					std::cout << std::endl;
+				}
+				break;
+			}
+
+		}
+		
+		if (!condition)
+		{
+			queue.pop_back(); // delete vertex if havn't new way
+			{ //output:
+				std::cout << "    -   |     -     |  ";
+				for (int i = 0; i < queue.size(); i++)
+				{
+					std::cout << queue[i] << " ";
+				}
+				if (queue.size() == 0)
+					std::cout << "- ";
+				std::cout << std::endl;
+			}
+		}	
+	}
+}
+
 //------ END ----------------------- algorithms -------------------------------------
 
 
@@ -862,5 +930,3 @@ std::ostream& operator<<(std::ostream &strm, const Graph & ag)
 }
 
 //=======  END  ====================== common method =================================
-
-
