@@ -190,12 +190,49 @@ void Graph::outputSquareMatrix(std::vector<std::vector<int>> matrix, int line)
 	std::cout << std::endl;
 }
 
+std::vector<std::vector<int>> Graph::transposeMatrix(std::vector<std::vector<int>> matrix)
+{
+	std::vector<std::vector<int>> result(matrix[0].size());
+	for (int i = 0; i < result.size(); i++)
+		result[i].resize(matrix.size());
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix[i].size(); j++)
+		{
+			result[j][i] = matrix[i][j];
+		}
+	}
+	return result;
+}
+
+std::vector<std::vector<int>> Graph::concatenationMatrices(std::vector<std::vector<int>> matrix1, std::vector<std::vector<int>> matrix2)
+{
+	std::vector<std::vector<int>> result(matrix1.size());
+	for (int i = 0; i < result.size(); i++)
+	{
+		result[i].resize(matrix1[i].size());
+		for (int j = 0; j < result[i].size(); j++)
+		{
+			result[i][j] = matrix1[i][j] + matrix2[i][j];
+		}
+	}
+	return result;
+}
+
 //======== END ======================= private method ================================
 
 //======= BEGIN ====================== common method =================================
 
 Graph::Graph()
 {
+}
+
+Graph::Graph(Graph * graph)
+{
+	this->vertices = graph->vertices;
+	this->edges = graph->edges;
+	update();
 }
 
 Graph::~Graph()
@@ -227,7 +264,7 @@ bool Graph::addEdge(Edge * edge)
 		return false;
 
 	edges.push_back(Edge(getVertex(edge->getVertex1()->getId()), getVertex(edge->getVertex2()->getId()), edge->getWeight()));
-	update();
+	//update();
 	return true;
 }
 
@@ -239,7 +276,7 @@ bool Graph::addEdge(int vertex1, int vertex2, int weight)
 	if (hasEdge(&e))
 		return false;
 	edges.push_back(e);
-	update();
+	//update();
 	return true;
 }
 
@@ -251,14 +288,14 @@ bool Graph::addEdge(int vertex1, int vertex2)
 	if (hasEdge(&e))
 		return false;
 	edges.push_back(e);
-	update();
+	//update();
 	return true;
 }
 
 void Graph::addVertex()
 {
 	vertices.push_back(Vertex(firstVertex()));
-	update();
+	//update();
 }
 
 void Graph::addVertex(int count)
@@ -267,7 +304,7 @@ void Graph::addVertex(int count)
 	{
 		addVertex();
 	}
-	update();
+	//update();
 }
 
 void Graph::removeEdge(Edge * edge) 
@@ -278,7 +315,7 @@ void Graph::removeEdge(Edge * edge)
 			i--;
 		}
 	}
-	update();
+	//update();
 }
 
 void Graph::removeVertex(int id) 
@@ -292,13 +329,13 @@ void Graph::removeVertex(int id)
 		}
 	}
 	vertices.erase(vertices.begin() + id);
-	update();
+	//update();
 }
 
 void Graph::removeVertex(Vertex * vertex) 
 {
 	removeVertex(vertex->getId());
-	update();
+	//update();
 }
 
 //----- BEGIN ----------------------- matrices ------------------------------------
@@ -389,6 +426,11 @@ std::vector<std::vector<int>> Graph::getDistanceMatrix()
 	return distanceMatrix;
 }
 
+std::vector<std::vector<int>> Graph::getReachabilityMatrix()
+{
+	return reachabilityMatrix;
+}
+
 void Graph::update()
 {
 	incedenceMatrix = createIncedenceMatrix();
@@ -400,6 +442,115 @@ void Graph::update()
 //------ END ------------------------ matrices --------------------------------------
 
 //----- BEGIN ---------------------- properties -------------------------------------
+
+
+int Graph::isHomogeneousGraph()
+{
+	std::vector<std::vector<int>> tmp = getDegreeOfVertices();
+	int degree = tmp[0][0];
+	for (int i = 0; i < tmp.size(); i++)
+	{
+		if (tmp[i][0] != degree)
+			return -1;
+	}
+	return degree;
+}
+
+bool Graph::isStronglyConnectedGraph()
+{
+	std::vector<std::vector<int>> matrix = getReachabilityMatrix();
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix[i].size(); j++)
+		{
+			if (matrix[i][j] != 1)
+				return false;
+		}
+	}
+	return true;
+}
+
+bool Graph::isUnilaterallyConnectedGraph()
+{
+	if (isStronglyConnectedGraph())
+		return true;
+	std::vector<std::vector<int>> matrix = getReachabilityMatrix();
+	matrix = concatenationMatrices(matrix, transposeMatrix(matrix));
+	for (int i = 0; i < matrix.size(); i++)
+		matrix[i][i] = 1;
+
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix[i].size(); j++)
+		{
+			if (matrix[i][j] < 1)
+				return false;
+		}
+	}
+	return true;
+
+	
+}
+
+bool Graph::isWeaklyConnectedGraph()
+{
+	if (isStronglyConnectedGraph())
+		return true;
+	if (isUnilaterallyConnectedGraph())
+		return true;
+	
+	std::vector<std::vector<int>> matrix = getAdjacencyMatrix();
+	matrix = concatenationMatrices(matrix, transposeMatrix(matrix));
+	for (int i = 0; i < matrix.size(); i++)
+		matrix[i][i] = 1;
+	matrix = degreeMatrix(matrix, matrix.size());
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix[i].size(); j++)
+		{
+			if (matrix[i][j] == 0)
+				return false;
+		}
+	}
+	return true;
+
+}
+
+bool Graph::isDisconnectedGraph()
+{
+	if (isStronglyConnectedGraph())
+		return false;
+	if (isWeaklyConnectedGraph())
+		return false;
+	if (isUnilaterallyConnectedGraph())
+		return false;
+	return true;
+}
+
+void Graph::outputConnectivity()
+{
+	if (isStronglyConnectedGraph())
+		std::cout << std::endl << "This graph is strongly connected!" << std::endl;
+	else if (isUnilaterallyConnectedGraph())
+		std::cout << std::endl << "This graph is unilaterally connected!" << std::endl;
+	else if (isWeaklyConnectedGraph())
+		std::cout << std::endl << "This graph is weakly connected!" << std::endl;
+	else if (isDisconnectedGraph())
+		std::cout << std::endl << "This graph is disconnected!" << std::endl;
+	else
+		std::cout << std::endl << "ERROR!!! (outputConnectivity())" << std::endl;
+}
+
+bool Graph::hasCycle()
+{
+	for (int i = 0; i < reachabilityMatrix.size(); i++)
+	{
+		if (reachabilityMatrix[i][i] > 0)
+			return true;
+	}
+	return false;
+}
 
 std::vector<std::vector<int>> Graph::getDegreeOfVertices()
 {
@@ -478,6 +629,11 @@ void Graph::outputDegreeOfVertices()
 		std::cout << std::setw(2) << degreeOfVertices[i][1] << " )";
 		std::cout << std::endl;
 	}
+	int degreeOfGraph = isHomogeneousGraph();
+	if (degreeOfGraph > 0)
+		std::cout << " + Graph is homogeneous! \n  + Degree of graph: " << degreeOfGraph << std::endl;
+	else
+		std::cout << " + Graph isn't homogeneous!" << std::endl;
 }
 
 void Graph::outputIsolatedAndHangingVertices()
@@ -508,6 +664,247 @@ void Graph::outputIsolatedAndHangingVertices()
 
 //------ END ----------------------- properties -------------------------------------
 
+//----- BEGIN ---------------------- algorithms -------------------------------------
+
+void Graph::outputPath(int start, int end)
+{
+	std::cout << " PATH " << start << " - " << end << ": ";
+	if (!hasPath(start, end))
+		std::cout << "not found." << std::endl;
+	else
+	{
+		std::vector<int> path = getPathBFS(start, end);
+		for (int i = 0; i < path.size()-1; i++)
+		{
+			std::cout << path[i] << " - ";
+		}
+		std::cout << path[path.size() - 1];
+		std::cout << " (Length: " << getLengthPath(start, end) << ");" << std::endl;
+
+	}
+}
+
+bool Graph::hasPath(int start, int end)
+{
+	if (!hasVertex(start) || !hasVertex(end)) // chech error
+		return false;;
+
+	if (reachabilityMatrix[start - 1][end - 1] > 0)
+		return true;
+	return false;
+}
+
+int Graph::getLengthPath(int start, int end)
+{
+	if (!hasPath(start, end))
+		return -1;
+	return distanceMatrix[start - 1][end  - 1];
+}
+
+//---BFS
+void Graph::BFS(int startVertex)
+{
+	if (!hasVertex(startVertex))
+	{ // chech error
+		std::cout << " !!! BFS bypassing is not available!" << std::endl;
+		return;
+	}
+
+	std::vector<int> queue;
+	std::vector<bool> used(vertices.size() + 1);
+	std::vector<int> parent(vertices.size() + 1);
+	std::vector<int> pathLength(vertices.size() + 1);
+
+	queue.push_back(startVertex);
+	used[startVertex] = true;
+	parent[startVertex] = -1;
+
+	//output:
+	int countOfCurrentVertex = 0;
+	{
+		countOfCurrentVertex++;
+		std::cout << " VERTEX | BFS count |  QUEUE    " << std::endl;
+		std::cout << "--------------------------------" << std::endl;
+		std::cout << std::setw(5) << startVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
+		for (int i = 0; i < queue.size(); i++)
+		{
+			std::cout << queue[i] << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	while (!queue.empty())
+	{
+		int currentVertex = queue.front();
+
+		for (size_t i = 0; i< adjacencyMatrix[currentVertex - 1].size(); i++)
+		{
+			int someVertex = i + 1;
+			if (adjacencyMatrix[currentVertex - 1][i] > 0 && !used[someVertex])
+			{
+				used[someVertex] = true;
+				queue.push_back(someVertex);
+				pathLength[someVertex] = pathLength[currentVertex] + 1;
+				parent[someVertex] = currentVertex;
+				{ //output:
+					countOfCurrentVertex++;
+					std::cout << std::setw(5) << someVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
+					for (int i = 0; i < queue.size(); i++)
+					{
+						std::cout << queue[i] << " ";
+					}
+					std::cout << std::endl;
+				}
+			}
+
+		}
+		queue.erase(queue.begin());
+		{ //output:
+			std::cout << "    -   |     -     |  ";
+			for (int i = 0; i < queue.size(); i++)
+			{
+				std::cout << queue[i] << " ";
+			}
+			if (queue.size() == 0)
+				std::cout << "- ";
+			std::cout << std::endl;
+		}
+	}
+}
+
+std::vector<int> Graph::getPathBFS(int start, int end)
+{
+	std::vector<int> result;
+
+	if (!hasPath(start, end))
+		return result;
+
+	int startVertex = start;
+	int endVertex = end;
+
+	std::vector<int> queue;
+	std::vector<bool> used(vertices.size() + 1);
+	std::vector<int> parent(vertices.size() + 1);
+
+	queue.push_back(startVertex);
+	used[startVertex] = true;
+	parent[startVertex] = -1;
+
+	bool condition = false;
+	while (!condition)
+	{
+		int currentVertex = queue.front();
+
+		for (int i = 0; i< adjacencyMatrix[currentVertex - 1].size(); i++)
+		{
+			if (adjacencyMatrix[currentVertex - 1][i] > 0)
+			{
+				int someVertex = i + 1;
+				if (!used[someVertex])
+				{
+					used[someVertex] = true;
+					queue.push_back(someVertex);
+					parent[someVertex] = currentVertex;
+				}
+				if (someVertex == endVertex)
+				{
+					condition = true;
+					break;
+				}
+			}
+
+		}
+		queue.erase(queue.begin());
+		if (queue.empty())
+			condition = true;
+	}
+
+	int currentVertex = end;
+	while(currentVertex > 0)
+	{
+		result.push_back(currentVertex);
+		currentVertex = parent[currentVertex];
+	}
+	std::vector<int> returnResult(result.size());
+	for (int i = 0; i < returnResult.size(); i++)
+	{
+		returnResult[i] = result[(result.size() - 1) - i];
+	}
+	return returnResult;
+}
+
+//---DFS
+
+void Graph::DFS(int startVertex)
+{
+	if (!hasVertex(startVertex))
+	{ // chech error
+		std::cout << " !!! DFS bypassing is not available!" << std::endl;
+		return;
+	}
+
+	std::vector<int> queue;
+	std::vector<bool> used(vertices.size() + 1);
+	queue.push_back(startVertex);
+	used[startVertex] = true;
+
+	//output:
+	int countOfCurrentVertex = 0;
+	{
+		countOfCurrentVertex++;
+		std::cout << " VERTEX | DFS count |  QUEUE    " << std::endl;
+		std::cout << "--------------------------------" << std::endl;
+		std::cout << std::setw(5) << startVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
+		for (int i = 0; i < queue.size(); i++)
+			std::cout << queue[i] << " ";
+		std::cout << std::endl;
+	}//::output
+
+	int currentVertex = queue.back();
+	while (!queue.empty())
+	{
+		currentVertex = queue.back();
+		bool condition = false;
+		for (int i = 0; i < adjacencyMatrix[currentVertex - 1].size(); i++)
+		{
+			int someVertex = i + 1;
+			if (adjacencyMatrix[currentVertex - 1][i] > 0 && !used[someVertex])
+			{
+				used[someVertex] = true;
+				queue.push_back(someVertex);
+				condition = true;
+				
+				{ //output:
+					countOfCurrentVertex++;
+					std::cout << std::setw(5) << someVertex << "   |" << std::setw(6) << countOfCurrentVertex << "     |  ";
+					for (int i = 0; i < queue.size(); i++)
+						std::cout << queue[i] << " ";
+					std::cout << std::endl;
+				}
+				break;
+			}
+
+		}
+		
+		if (!condition)
+		{
+			queue.pop_back(); // delete vertex if havn't new way
+			{ //output:
+				std::cout << "    -   |     -     |  ";
+				for (int i = 0; i < queue.size(); i++)
+				{
+					std::cout << queue[i] << " ";
+				}
+				if (queue.size() == 0)
+					std::cout << "- ";
+				std::cout << std::endl;
+			}
+		}	
+	}
+}
+
+//------ END ----------------------- algorithms -------------------------------------
+
 
 std::ostream& operator<<(std::ostream &strm, const Graph & ag) 
 {
@@ -533,5 +930,3 @@ std::ostream& operator<<(std::ostream &strm, const Graph & ag)
 }
 
 //=======  END  ====================== common method =================================
-
-

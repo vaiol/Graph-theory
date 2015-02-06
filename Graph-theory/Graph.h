@@ -1,6 +1,7 @@
 #pragma once
 #include "Edge.h"
 #include <vector>
+#include <queue>
 
 class Graph 
 {
@@ -19,6 +20,8 @@ private:
 	std::vector<std::vector<int>> createDistanceMatrix();
 	std::vector<std::vector<int>> createReachabilityMatrix();
 	std::vector<std::vector<int>> degreeMatrix(std::vector<std::vector<int>> matrix, int degree);
+	std::vector<std::vector<int>> transposeMatrix(std::vector<std::vector<int>> matrix);
+	std::vector<std::vector<int>> concatenationMatrices(std::vector<std::vector<int>> matrix1, std::vector<std::vector<int>> matrix2);
 	void outputSquareMatrix(std::vector<std::vector<int>> matrix, int line);
 protected:
 	std::vector<Edge> edges;
@@ -26,6 +29,7 @@ protected:
 public:
 	//---graphs
 	Graph();
+	Graph(Graph * graph);
 	~Graph();
 	Edge * getEdge(int id);
 	Vertex * getVertex(int id);
@@ -45,13 +49,33 @@ public:
 	std::vector<std::vector<int>> getAdjacencyMatrix();
 	std::vector<std::vector<int>> getIncedenceMatrix();
 	std::vector<std::vector<int>> getDistanceMatrix();
+	std::vector<std::vector<int>> getReachabilityMatrix();
 	void update();
 	//---properties
+	int isHomogeneousGraph();
+	bool hasCycle();
+	//BEGIN-connectivity
+	bool isStronglyConnectedGraph();
+	bool isWeaklyConnectedGraph();
+	bool isUnilaterallyConnectedGraph();
+	bool isDisconnectedGraph();
+	void outputConnectivity();
+	//END-connectivity
 	std::vector<std::vector<int>> getDegreeOfVertices();
 	std::vector<Vertex> getIsolatedVertices();
 	std::vector<Vertex> getHangingVertices();
 	void outputDegreeOfVertices();
 	void outputIsolatedAndHangingVertices();
+	//---algorithms
+	//common
+	void outputPath(int start, int end);
+	bool hasPath(int start, int end);
+	int getLengthPath(int start, int end);
+	//BFS
+	void BFS(int startVertex);
+	std::vector<int> getPathBFS(int start, int end);
+	//DFS
+	void DFS(int startVertex);
 	//---operators
 	friend std::ostream& operator<<(std::ostream&, const Graph&);
 };

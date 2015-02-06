@@ -5,6 +5,10 @@ NonOrientedGraph::NonOrientedGraph() : Graph()
 {
 }
 
+NonOrientedGraph::NonOrientedGraph(Graph * graph) : Graph(graph)
+{
+}
+
 std::vector<std::vector<int>> NonOrientedGraph::createIncedenceMatrix()
 {
 	size_t line = vertices.size();
@@ -67,6 +71,7 @@ std::vector<std::vector<int>> NonOrientedGraph::createAdjacencyMatrix()
 	}
 	return result;
 }
+
 
 bool NonOrientedGraph::hasEdge(Edge * edge)
 {

@@ -5,6 +5,10 @@ OrientedGraph::OrientedGraph() : Graph()
 {
 }
 
+OrientedGraph::OrientedGraph(Graph * graph) : Graph(graph)
+{
+}
+
 std::vector<std::vector<int>> OrientedGraph::createIncedenceMatrix()
 {
 	
@@ -76,3 +80,4 @@ bool OrientedGraph::hasEdge(Edge * edge)
 	}
 	return false;
 }
+

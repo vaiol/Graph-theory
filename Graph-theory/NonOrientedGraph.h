@@ -6,6 +6,7 @@ class NonOrientedGraph : public Graph
 {
 public:
 	NonOrientedGraph();
+	NonOrientedGraph(Graph * graph);
 	~NonOrientedGraph();
 	std::vector<std::vector<int>> createIncedenceMatrix();
 	std::vector<std::vector<int>> createAdjacencyMatrix();
