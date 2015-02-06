@@ -67,7 +67,14 @@ public:
 	void outputDegreeOfVertices();
 	void outputIsolatedAndHangingVertices();
 	//---algorithms
-	void BFS(Vertex * vertex);
+	//common
+	void outputPath(int start, int end);
+	bool hasPath(int start, int end);
+	int getLengthPath(int start, int end);
+	//BFS
+	void BFS(int startVertex);
+	std::vector<int> getPathBFS(int start, int end);
+
 	//---operators
 	friend std::ostream& operator<<(std::ostream&, const Graph&);
 };

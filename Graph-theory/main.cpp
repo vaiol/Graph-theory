@@ -10,15 +10,15 @@ using namespace std;
 
 int main() {
 
-	Graph * graph = new OrientedGraph();
+	Graph * graph = new NonOrientedGraph();
 	graph->addVertex(8);
-	graph->addEdge(1, 2);
+	graph->addEdge(7, 6);
 	graph->addEdge(1, 3);
 
 	graph->addEdge(2, 3);
 	graph->addEdge(2, 4); 
 	graph->addEdge(2, 5); 
-	graph->addEdge(2, 6);
+	graph->addEdge(6, 2);
 
 	graph->addEdge(3, 7);
 	graph->addEdge(4, 8);
@@ -31,8 +31,9 @@ int main() {
 	cout << *graph << endl;
 	graph->outputAdjacencyMatrix();
 	graph->outputReachabilityMatrix();
-	Vertex v(1);
-	graph->BFS(&v);
+	graph->BFS(1);
+	graph->outputPath(1, 8);
+
 	
 
 

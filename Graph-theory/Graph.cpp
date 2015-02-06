@@ -666,9 +666,13 @@ void Graph::outputIsolatedAndHangingVertices()
 
 //----- BEGIN ---------------------- algorithms -------------------------------------
 
-void Graph::BFS(Vertex * vertex)
+void Graph::BFS(int startVertex)
 {
-	int startVertex = vertex->getId();
+	if (!hasVertex(startVertex))
+	{ // chech error
+		std::cout << " !!! BFS bypassing is not available!" << std::endl;
+		return;
+	}
 
 	std::vector<int> queue;
 	std::vector<bool> used(vertices.size() + 1);
@@ -692,8 +696,6 @@ void Graph::BFS(Vertex * vertex)
 		}
 		std::cout << std::endl;
 	}
-
-
 
 	while (!queue.empty()) 
 	{
@@ -735,20 +737,102 @@ void Graph::BFS(Vertex * vertex)
 			std::cout << std::endl;
 		}
 	}
-	/*
-	//≈сли теперь надо восстановить и вывести кратчайший путь до какой - то вершины \rm to, это можно сделать следующим образом :
-	if (!used[to])
-		cout << "No path!";
-	else {
-		vector<int> path;
-		for (int v = to; v != -1; v = p[v])
-			path.push_back(v);
-		reverse(path.begin(), path.end());
-		cout << "Path: ";
-		for (size_t i = 0; i<path.size(); ++i)
-			cout << path[i] + 1 << " ";
+}
+
+void Graph::outputPath(int start, int end)
+{
+	std::cout << " PATH " << start << " - " << end << ": ";
+	if (!hasPath(start, end))
+		std::cout << "not found." << std::endl;
+	else
+	{
+		std::vector<int> path = getPathBFS(start, end);
+		for (int i = 0; i < path.size()-1; i++)
+		{
+			std::cout << path[i] << " - ";
+		}
+		std::cout << path[path.size() - 1];
+		std::cout << " (Length: " << getLengthPath(start, end) << ");" << std::endl;
+
 	}
-	*/
+}
+
+bool Graph::hasPath(int start, int end)
+{
+	if (!hasVertex(start) || !hasVertex(end)) // chech error
+		return false;;
+
+	if (reachabilityMatrix[start - 1][end - 1] > 0)
+		return true;
+	return false;
+}
+
+int Graph::getLengthPath(int start, int end)
+{
+	if (!hasPath(start, end))
+		return -1;
+	return distanceMatrix[start - 1][end  - 1];
+}
+
+std::vector<int> Graph::getPathBFS(int start, int end)
+{
+	std::vector<int> result;
+
+	if (!hasPath(start, end))
+		return result;
+
+	int startVertex = start;
+	int endVertex = end;
+
+	std::vector<int> queue;
+	std::vector<bool> used(vertices.size() + 1);
+	std::vector<int> parent(vertices.size() + 1);
+
+	queue.push_back(startVertex);
+	used[startVertex] = true;
+	parent[startVertex] = -1;
+
+	bool condition = false;
+	while (!condition)
+	{
+		int currentVertex = queue.front();
+
+		for (int i = 0; i< adjacencyMatrix[currentVertex - 1].size(); i++)
+		{
+			if (adjacencyMatrix[currentVertex - 1][i] > 0)
+			{
+				int someVertex = i + 1;
+				if (!used[someVertex])
+				{
+					used[someVertex] = true;
+					queue.push_back(someVertex);
+					parent[someVertex] = currentVertex;
+				}
+				if (someVertex == endVertex)
+				{
+					condition = true;
+					break;
+				}
+			}
+
+		}
+		queue.erase(queue.begin());
+		if (queue.empty())
+			condition = true;
+	}
+
+	int currentVertex = end;
+	while(currentVertex > 0)
+	{
+		result.push_back(currentVertex);
+		currentVertex = parent[currentVertex];
+	}
+	std::vector<int> returnResult(result.size());
+	for (int i = 0; i < returnResult.size(); i++)
+	{
+		returnResult[i] = result[(result.size() - 1) - i];
+	}
+	return returnResult;
 }
 
 //------ END ----------------------- algorithms -------------------------------------
